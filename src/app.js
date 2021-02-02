@@ -249,6 +249,7 @@ app.get("/library/:id_library/students/:id/book/create", function(req, res){
 	res.render("createref.hbs");
 });
 
+//vytvorime novu referenciu
 app.post("/library/:id_library/students/:id/book/create", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const book_name = req.body.nbook;
@@ -258,16 +259,17 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 	const id_student = req.params.id;
 	const id_library = req.params.id_library;
 
-	const select_book = "SELECT * FROM book WHERE name = ? AND author = ? AND id_library = ?";
-	const insert_ref = "INSERT INTO ref_book_student (id_student, id_book, taken, returning, returned) VALUES (?, ?, ?, ?, ?) ";
-	const check_contains = "SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id = ? AND ref.returned = ?";
+	const select_book = "SELECT * FROM book WHERE name = ? AND author = ? AND id_library = ?"; //ziskame vsetke knihy
+	const insert_ref = "INSERT INTO ref_book_student (id_student, id_book, taken, returning, returned) VALUES (?, ?, ?, ?, ?) "; //vytvarame referenciu
+	const check_contains = "SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id = ? AND ref.returned = ?"; // kontrola
 
+	//hladame knihu ktoru chceme dat studentovi ked kniha neexistuje v kniznice tak vzskoci report
 	connection.query(select_book, [book_name, author, id_library], function(err, data){
 		if(err) return console.log(err);
 		if(data.length > 0){
 
 			let id_book = data[0].id;
-
+			//ked kniha je v kniznice tak kontrolujeme ci student ju neprevzial uz 
 			connection.query(check_contains, [id_book, false], function(err, book){
 				if(book.length > 0){
 					res.render("report.hbs", {
@@ -281,7 +283,8 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 
 					const taken = today.getFullYear()+'-'+(today.getMonth() + 1)+'-'+(today.getDate() + 1);
 					const _return = today.getFullYear()+'-'+(today.getMonth() + m)+'-'+(today.getDate() + d);
-
+					
+					//ked nie tak vytvarame referenciu
 					connection.query(insert_ref, [id_student, id_book, taken, _return, false], function(err){
 						if(err) return console.log(err);
 						res.redirect("/library/" + id_library + "/students/" + id_student + "/book");
