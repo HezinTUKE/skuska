@@ -12,8 +12,8 @@
             <tr><th>Name</th><th>Surname</th><th>Phone</th><th>E-mail</th><th></th></tr>
             {{#each students}}
             <tr>
-                <td>{{this.surname}}</td>
                 <td>{{this.name}}</td>
+                <td>{{this.surname}}</td>
                 <td>{{this.phone}}</td>
                 <td>{{this.email}}</td>
                 <td><a href = "/library/{{this.id_library}}/students/edit/{{this.id}}">Edit</a></td>

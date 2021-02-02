@@ -1,4 +1,4 @@
-const mysql = require("mysql");
+const mysql = require('mysql2');
 const express = require('express');
 const body_parser = require("body-parser"); 
 const hbs = require("hbs");
@@ -25,9 +25,8 @@ connection.connect(function(err){
 
 //-----------------------------------------------------KNIŽNICA-------------------------------------------
 
-//ziskavame zoznam kniznic
 app.get("/library", function(req, res){
-	connection.query("SELECT * FROM library ORDER BY address ASC", function(err, data){
+	connection.query("SELECT * FROM library", function(err, data){
 		if(err) return console.error(err);
 		res.render("library.hbs",{
 			librarys : data
@@ -35,12 +34,10 @@ app.get("/library", function(req, res){
 	});
 });
 
-//ziskavame formu pre vytvaranie kniznice
 app.get("/create", function(req, res){
 	res.render("create.hbs");
 });
 
-//vytvarame kniznicu
 app.post("/create", bodyParser, function(req, res){
 	
 	if(!bodyParser) return res.sendStatus(400);
@@ -54,7 +51,6 @@ app.post("/create", bodyParser, function(req, res){
 	});
 });
 
-//vymazanie kniznice podla jej ID
 app.post("/delete/:id", function(req, res){
 	const id = req.params.id;
 	connection.query("DELETE FROM library WHERE id = ?" , [id] , function(err){
@@ -63,7 +59,6 @@ app.post("/delete/:id", function(req, res){
 	});
 });
 
-//editovanie kniznice podla jej ID
 app.get("/edit/:id", function(req, res){
 	const id = req.params.id;
 	connection.query("SELECT * FROM library WHERE id = ?" , [id], function(err, data){
@@ -76,7 +71,6 @@ app.get("/edit/:id", function(req, res){
 
 app.post("/edit", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
-	//ziskavame vsetke data z formy
 	const id = req.body.id;
 	const phone = req.body.phone;
 	const email = req.body.email;
@@ -92,10 +86,9 @@ app.post("/edit", bodyParser, function(req, res){
 
 //-----------------------------------------------------ŠTUDENTI-------------------------------------------
 
-//ziskavame zoznam studentov
 app.get("/library/:id/students", function(req, res){
 	const id = req.params.id;
-	connection.query("SELECT * FROM student WHERE id_library = ? ORDER BY surname ASC", [id], function(err, data){
+	connection.query("SELECT * FROM student WHERE id_library = ?", [id], function(err, data){
 		if(err) return console.log(err);
 		res.render("student.hbs", {
 			library_id : id,
@@ -104,7 +97,6 @@ app.get("/library/:id/students", function(req, res){
 	});
 });
 
-//vymazanie studenta podla ID
 app.post("/library/:id_library/students/delete/:id", function(req, res){
 	const id = req.params.id;
 	const id_library = req.params.id_library;
@@ -114,12 +106,10 @@ app.post("/library/:id_library/students/delete/:id", function(req, res){
 	});
 });
 
-//ziskavame formu pre vytvaranie studenta
 app.get("/library/:id_library/students/create", function(req, res){
 	res.render("newstudent.hbs");
 });
 
-//vytvaranie studenta
 app.post("/library/:id_library/students/create", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const name = req.body.name;
@@ -171,7 +161,7 @@ app.post("/library/:id_library/students/edit", bodyParser, function(req, res){
 
 app.get("/library/:id/books", function(req, res){
 	const id_libr = req.params.id;
-	connection.query("SELECT * FROM book WHERE id_library = ? ORDER BY name ASC", [id_libr], function(err, data){
+	connection.query("SELECT * FROM book WHERE id_library = ?", [id_libr], function(err, data){
 		if(err) return console.log(err);
 		res.render("books.hbs",{
 			id_library:id_libr,
@@ -241,15 +231,15 @@ app.post("/library/:id/books/edit", bodyParser, function(req, res){
 
 //-----------------------------------------------------REFERENCIA-------------------------------------------
 
-//ziskavame zoznam knih ktore patria urcitemu studentu podla kniznice a knihy
 app.get("/library/:id_library/students/:id/book", function(req, res){
-	let history = req.query.history;
+	const history = req.query.history;
+	console.log(history);
 	const id_library = req.params.id_library;
 	const id_student = req.params.id;
-	connection.query("SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id_library = ? AND ref.returned = ? ORDER BY name ASC", 
-	[id_library, Boolean(history)], function(err, data){
+	connection.query("SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id_library = ?", [id_library], function(err, data){
 		if(err) return console.log(err);
 		res.render("ref.hbs", {
+			history : history,
 			id_library : id_library,
 			id_student : id_student,
 			refs : data
@@ -261,7 +251,6 @@ app.get("/library/:id_library/students/:id/book/create", function(req, res){
 	res.render("createref.hbs");
 });
 
-//vytvaranie referencie
 app.post("/library/:id_library/students/:id/book/create", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const book_name = req.body.nbook;
@@ -271,18 +260,16 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 	const id_student = req.params.id;
 	const id_library = req.params.id_library;
 
-	const select_book = "SELECT * FROM book WHERE name = ? AND author = ? AND id_library = ?"; //ziskame knihu
-	const insert_ref = "INSERT INTO ref_book_student (id_student, id_book, taken, returning, returned) VALUES (?, ?, ?, ?, ?) "; //vytvarame 
-	const check_contains = "SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id = ? AND ref.returned = ?"; //kontrolovanie toho ci ma student danu knihu
+	const select_book = "SELECT * FROM book WHERE name = ? AND author = ? AND id_library = ?";
+	const insert_ref = "INSERT INTO ref_book_student (id_student, id_book, taken, returning, returned) VALUES (?, ?, ?, ?, ?) ";
+	const check_contains = "SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id = ? AND ref.returned = ?";
 
-	//najdeme knihu a podla toho zistime ci kniznica ma tuto kniho ked nie tak vyskoci report
-	connection.query(select_book, [book_name, author, id_library], function(err, data){ 
+	connection.query(select_book, [book_name, author, id_library], function(err, data){
 		if(err) return console.log(err);
 		if(data.length > 0){
 
 			let id_book = data[0].id;
-			
-			//zistime ci student ma danu knihu student ked ano tak tak vyskoci report
+
 			connection.query(check_contains, [id_book, false], function(err, book){
 				if(book.length > 0){
 					res.render("report.hbs", {
@@ -296,7 +283,7 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 
 					const taken = today.getFullYear()+'-'+(today.getMonth() + 1)+'-'+(today.getDate() + 1);
 					const _return = today.getFullYear()+'-'+(today.getMonth() + m)+'-'+(today.getDate() + d);
-					//vytvorime referenciu
+
 					connection.query(insert_ref, [id_student, id_book, taken, _return, false], function(err){
 						if(err) return console.log(err);
 						res.redirect("/library/" + id_library + "/students/" + id_student + "/book");
@@ -309,7 +296,6 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 	});
 });
 
-//sluzi na vratanie knih 
 app.post("/library/:id_library/students/:id/book/return/:id_ref", function(req, res){
 	const id_library = req.params.id_library;
 	const id_student = req.params.id;
@@ -320,16 +306,6 @@ app.post("/library/:id_library/students/:id/book/return/:id_ref", function(req, 
 		res.redirect("/library/" + id_library + "/students/" + id_student + "/book");
 	});
 });
-
-//vrati historiu
-/*app.post("/library/:id_library/students/:id/book/return/:id_ref/history", function(req, res){
-	const id_ref = req.params.id_ref;
-	const sql = "SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND ref.id = ? AND ref.returned = ?";
-
-	connection.query(sql, [id_ref, true], function(err, data){
-		
-	});
-});*/
 
 //-----------------------------------------------------REFERENCIA-------------------------------------------
 
