@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Librarys</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>List of librarys</h2>
+        <a href="/create">Add new library</a><br/><br/>
+        <table>
+            <tr><th>Address</th><th>Phone</th><th>E-mail</th><th></th><th></th></tr>
+            {{#each librarys}}
+                <tr>
+                    <td>{{this.address}}</td>
+                    <td>{{this.phone}}</td>
+                    <td>{{this.email}}</td>
+                    <td><button><a href = "/edit/{{this.id}}">Edit</a></button></td>
+                    <td>
+                        <form action = "/delete/{{this.id}}" method = "POST">
+                            <input type = "submit" value = "Delete" />
+                        </form>
+                    </td>
+                    <td></td><td></td><td></td>
+                    <td><button><a href = "library/{{this.id}}/books">List of books</a></button></td>
+                    <td><button><a href = "library/{{this.id}}/students">List of students</a></button></td>
+                </tr>
+            {{/each}}
+        </table>
+    </body>
+    {{> footer}}
+</html>

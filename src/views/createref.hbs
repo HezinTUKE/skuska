@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MyBook</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>Create reference</h2>
+        <form method = "POST">
+            <label>Name of book</label>
+            <input type="text" name = "nbook"/><br/><br/>
+            <label>Author</label>
+            <input type="text" name = "author"/><br/><br/>
+            <label>Term (in days)</label>
+            <input type="number" name = "days" min="5" max="30"/><br/><br/>
+            <input type="submit" value="Add"/>
+        </form>
+        {{> footer}}
+    </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>MyBook</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>Books </h2>
+        {{>librarys}}
+        <button><a href="/library/{{id_library}}/students/{{id_student}}/book/create">Create reference</a></button>
+        <button><a href="/library/{{id_library}}/students/{{id_student}}/book?history=1">History</a></button>
+        <button><a href="/library/{{id_library}}/students/{{id_student}}/book">Active</a></button>
+        <table>
+            <tr><th>Name</th><th>Author</th><th>Taken</th><th>Return</th></tr>
+            {{#each refs}}
+                <tr>
+                    {{#unless this.returned }}
+                        <td>{{this.name}}</td>
+                        <td>{{this.author}}</td>
+                        <td>{{this.taken}}</td>
+                        <td>{{this.returning}}</td>
+                        <td>
+                            <form action="/library/{{id_library}}/students/{{this.id_student}}/book/return/{{this.id}}" method = "POST">
+                                <input type="submit" value="Return" />
+                            </form>
+                        </td>
+                    {{/unless}}
+                    {{#if history}}
+                        {{#if this.returned}}
+                            <td>{{this.name}}</td>
+                            <td>{{this.author}}</td>
+                            <td>{{this.taken}}</td>
+                            <td>{{this.returning}}</td>
+                        {{/if}}
+                    {{/if}}
+                </tr>
+            {{/each}}
+        </table>
+        {{> footer}}
+    </body>
+</html>

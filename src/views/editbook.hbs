@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit book</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>Edit book</h2>
+        <form action="/library/{{id_library}}/books/edit" method="POST">
+            <input type="hidden" name = "id" value="{{book.id}}"/>
+            <label>Name</label>
+            <input type="text" name = "name" value="{{book.name}}"/><br/><br/>
+            <label>Author</label>
+            <input type="text" name = "author" value="{{book.author}}"/><br/><br/>
+            <input type="submit" value="Edit"/>
+        </form>
+        {{>footer}}
+    </body>
+</html>

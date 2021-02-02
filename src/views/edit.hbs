@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>Edit library data</h2>
+        <form action="/edit" method = "POST">
+            <input type="hidden" name = "id" value = "{{library.id}}"/>
+            <label>Address</label>
+            <input type="text" name = "address" value="{{library.address}}"/><br/><br/>
+            <label>Phone</label>
+            <input type="text" name = "phone" value="{{library.phone}}"/><br/><br/>
+            <label>E-mail</label>
+            <input type="text" name = "email" value="{{library.email}}" /><br/><br/>
+            <input type="submit" value="Edit"/>
+        </form>
+        {{>librarys}}
+        {{>footer}}
+    </body>
+</html>

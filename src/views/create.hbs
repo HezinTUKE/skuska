@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>New library</title>
+        <meta charset="utf=-8"/>
+    </head>
+    <body>
+        <h2>Add new library</h2>
+        <form method="POST">
+            <label>Address</label>
+            <input type="text" name = "address" /><br/><br/>
+            <label>Phone</label>
+            <input type="text" name = "phone" /><br/><br/>
+            <label>E-mail</label>
+            <input type="text" name = "email" /><br/><br/>
+            <input type="submit" value="Add"/>
+        </form>
+        {{>librarys}}
+        {{>footer}}
+    </body>
+</html>

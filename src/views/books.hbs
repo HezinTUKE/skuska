@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Books</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>Book list</h2>
+        {{>librarys}}
+        <button><a href="/library/{{id_library}}/books/create">Add book</a></button>
+        <table>
+            <tr><th>Name</th><th>Author</th><th></th></tr>
+            {{#each books}}
+            <tr>
+                <td>{{this.name}}</td>
+                <td>{{this.author}}</td>
+                <td><a href = "/library/{{this.id_library}}/books/edit/{{this.id}}">Edit</a></td>
+                <td>
+                    <form action="/library/{{this.id_library}}/books/delete/{{this.id}}", method="POST">
+                        <input type="submit" value="Delete"/>
+                    </form>
+                </td>
+            </tr>
+            {{/each}}
+        </table>
+        {{>footer}}
+    </body>
+</html>

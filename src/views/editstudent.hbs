@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Edit student</title>
+        <meta charset="utf-8"/>
+    </head>
+    <body>
+        <h2>Edit students</h2>
+        <form action="/library/{{student.id_library}}/students/edit" method="POST">
+            <input type="hidden" name = "id" value="{{student.id}}"/>
+            <label>Name</label>
+            <input type="text" name = "name" value="{{student.name}}"/><br/><br/>
+            <label>Surname</label>
+            <input type="text" name = "surname" value="{{student.surname}}"/><br/><br/>
+            <label>Phone</label>
+            <input type="text" name = "phone" value="{{student.phone}}"/><br/><br/>
+            <label>E-mail</label>
+            <input type="text" name = "email" value="{{student.email}}"/><br/><br/>
+            <input type="submit" value="Edit"/>
+        </form>
+        {{>footer}}
+    </body>
+</html>
