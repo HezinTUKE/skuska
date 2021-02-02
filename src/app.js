@@ -26,7 +26,7 @@ connection.connect(function(err){
 //-----------------------------------------------------KNIŽNICA-------------------------------------------
 
 app.get("/library", function(req, res){
-	connection.query("SELECT * FROM library", function(err, data){
+	connection.query("SELECT * FROM library ORDER BY address ASC", function(err, data){
 		if(err) return console.error(err);
 		res.render("library.hbs",{
 			librarys : data
@@ -88,7 +88,7 @@ app.post("/edit", bodyParser, function(req, res){
 
 app.get("/library/:id/students", function(req, res){
 	const id = req.params.id;
-	connection.query("SELECT * FROM student WHERE id_library = ?", [id], function(err, data){
+	connection.query("SELECT * FROM student WHERE id_library = ? ORDER BY surname ASC", [id], function(err, data){
 		if(err) return console.log(err);
 		res.render("student.hbs", {
 			library_id : id,
@@ -161,7 +161,7 @@ app.post("/library/:id_library/students/edit", bodyParser, function(req, res){
 
 app.get("/library/:id/books", function(req, res){
 	const id_libr = req.params.id;
-	connection.query("SELECT * FROM book WHERE id_library = ?", [id_libr], function(err, data){
+	connection.query("SELECT * FROM book WHERE id_library = ? ORDER BY name ASC", [id_libr], function(err, data){
 		if(err) return console.log(err);
 		res.render("books.hbs",{
 			id_library:id_libr,
@@ -233,13 +233,11 @@ app.post("/library/:id/books/edit", bodyParser, function(req, res){
 
 app.get("/library/:id_library/students/:id/book", function(req, res){
 	const history = req.query.history;
-	console.log(history);
 	const id_library = req.params.id_library;
 	const id_student = req.params.id;
-	connection.query("SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id_library = ?", [id_library], function(err, data){
+	connection.query("SELECT * FROM book INNER JOIN ref_book_student AS ref ON book.id = ref.id_book AND book.id_library = ? AND ref.returned = ? ORDER BY book.name ASC", [id_library, Boolean(history)], function(err, data){
 		if(err) return console.log(err);
 		res.render("ref.hbs", {
-			history : history,
 			id_library : id_library,
 			id_student : id_student,
 			refs : data
