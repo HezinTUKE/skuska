@@ -25,6 +25,7 @@ connection.connect(function(err){
 
 //-----------------------------------------------------KNIŽNICA-------------------------------------------
 
+//ziskat zoznam kniznic
 app.get("/library", function(req, res){
 	connection.query("SELECT * FROM library ORDER BY address ASC", function(err, data){
 		if(err) return console.error(err);
@@ -34,13 +35,15 @@ app.get("/library", function(req, res){
 	});
 });
 
+//vrati formu pre vytvaranie kniznice
 app.get("/create", function(req, res){
 	res.render("create.hbs");
 });
 
+//zapise kniznicu do databazy pomocou connection.query
 app.post("/create", bodyParser, function(req, res){
-	
 	if(!bodyParser) return res.sendStatus(400);
+	//ziskat data z formy
 	const phone = req.body.phone;
 	const email = req.body.email;
 	const address = req.body.address;
@@ -51,6 +54,7 @@ app.post("/create", bodyParser, function(req, res){
 	});
 });
 
+//vymazanie kniznice podla jej ID
 app.post("/delete/:id", function(req, res){
 	const id = req.params.id;
 	connection.query("DELETE FROM library WHERE id = ?" , [id] , function(err){
@@ -59,6 +63,7 @@ app.post("/delete/:id", function(req, res){
 	});
 });
 
+//ziskat formu pre editovanie urcitej kniznice (podla jej ID)
 app.get("/edit/:id", function(req, res){
 	const id = req.params.id;
 	connection.query("SELECT * FROM library WHERE id = ?" , [id], function(err, data){
@@ -69,6 +74,7 @@ app.get("/edit/:id", function(req, res){
 	});
 });
 
+//zapis do databazy 
 app.post("/edit", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const id = req.body.id;
@@ -86,6 +92,7 @@ app.post("/edit", bodyParser, function(req, res){
 
 //-----------------------------------------------------ŠTUDENTI-------------------------------------------
 
+//ziskat zoznam studentov ktore su zapisane v kniznice podla ID kniznice
 app.get("/library/:id/students", function(req, res){
 	const id = req.params.id;
 	connection.query("SELECT * FROM student WHERE id_library = ? ORDER BY surname ASC", [id], function(err, data){
@@ -97,6 +104,7 @@ app.get("/library/:id/students", function(req, res){
 	});
 });
 
+//vymazat studenta z kniznice a hned z databazy
 app.post("/library/:id_library/students/delete/:id", function(req, res){
 	const id = req.params.id;
 	const id_library = req.params.id_library;
@@ -106,10 +114,12 @@ app.post("/library/:id_library/students/delete/:id", function(req, res){
 	});
 });
 
+//ziskat formu pre vytvaranie studenta v kniznice 
 app.get("/library/:id_library/students/create", function(req, res){
 	res.render("newstudent.hbs");
 });
 
+//vytvorime studenta v kniznice
 app.post("/library/:id_library/students/create", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const name = req.body.name;
@@ -125,6 +135,7 @@ app.post("/library/:id_library/students/create", bodyParser, function(req, res){
 	});
 });
 
+//vrati formu pre editovanie studenta podla ID studenta 
 app.get("/library/:id_library/students/edit/:id", function(req, res){
 	const id = req.params.id;
 	const id_library = req.params.id_library;
@@ -137,6 +148,7 @@ app.get("/library/:id_library/students/edit/:id", function(req, res){
 	});
 });
 
+//edituje studenta 
 app.post("/library/:id_library/students/edit", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const id = req.body.id;
@@ -159,6 +171,7 @@ app.post("/library/:id_library/students/edit", bodyParser, function(req, res){
 
 //-----------------------------------------------------KNIHA-------------------------------------------
 
+//zoznam knih v kniznice
 app.get("/library/:id/books", function(req, res){
 	const id_libr = req.params.id;
 	connection.query("SELECT * FROM book WHERE id_library = ? ORDER BY name ASC", [id_libr], function(err, data){
@@ -170,10 +183,12 @@ app.get("/library/:id/books", function(req, res){
 	});
 });
 
+//forma pre vytvaranie knihy 
 app.get("/library/:id/books/create", function(req, res){
 	res.render("createbook.hbs");
 });
 
+//vytvaranie knihy v kniznice
 app.post("/library/:id/books/create", bodyParser, function(req, res){
 	
 	if(!bodyParser) return res.status(400);
@@ -188,6 +203,7 @@ app.post("/library/:id/books/create", bodyParser, function(req, res){
 	});
 });
 
+//vymazanie knihy
 app.post("/library/:id/books/delete/:id_book", function(req, res){
 	const id = req.params.id;
 	const id_book = req.params.id_book;
@@ -198,6 +214,7 @@ app.post("/library/:id/books/delete/:id_book", function(req, res){
 	});
 });
 
+//forma pre editovanie knihy
 app.get("/library/:id/books/edit/:id_book", function(req, res){
 	const id = req.params.id;
 	const id_book = req.params.id_book;
@@ -212,6 +229,7 @@ app.get("/library/:id/books/edit/:id_book", function(req, res){
 
 });
 
+//editovanie knihy
 app.post("/library/:id/books/edit", bodyParser, function(req, res){
 	if(!bodyParser) return res.status(400);
 	const id_book = req.body.id;
@@ -279,7 +297,7 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 					let today = new Date();
 			
 					let m = Math.floor(term / 30) + 1;
-					let d = m == 1 ? Number(term) : term - (30* (m-1))
+					let d = m == 1 ? Number(term) : term - (30* (m-1));
 
 					const taken = today.getFullYear()+'-'+(today.getMonth() + 1)+'-'+(today.getDate() + 1);
 					const _return = today.getFullYear()+'-'+(today.getMonth() + m)+'-'+(today.getDate() + d);
