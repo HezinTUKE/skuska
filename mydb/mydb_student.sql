@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `mydb` /*!40100 DEFAULT CHARACTER SET latin1 */;
-USE `mydb`;
 -- MySQL dump 10.13  Distrib 5.6.41, for Win64 (x86_64)
 --
 -- Host: 127.0.0.1    Database: mydb
@@ -33,8 +31,8 @@ CREATE TABLE `student` (
   `phone` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_idx` (`id_library`),
-  CONSTRAINT `id` FOREIGN KEY (`id_library`) REFERENCES `library` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
+  CONSTRAINT `id` FOREIGN KEY (`id_library`) REFERENCES `library` (`id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -46,4 +44,4 @@ CREATE TABLE `student` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-02-03  3:44:46
+-- Dump completed on 2021-02-03 22:29:32
