@@ -1,4 +1,4 @@
-const mysql = require('mysql2');
+const mysql = require('mysql');
 const express = require('express');
 const body_parser = require("body-parser"); 
 const hbs = require("hbs");
@@ -289,6 +289,7 @@ app.post("/library/:id_library/students/:id/book/create", bodyParser, function(r
 			let id_book = data[0].id;
 			//ked kniha je v kniznice tak kontrolujeme ci student ju neprevzial uz 
 			connection.query(check_contains, [id_book, false], function(err, book){
+				if(err) return console.log(err);
 				if(book.length > 0){
 					res.render("report.hbs", {
 						report : "This student already has this book."
