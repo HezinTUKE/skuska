@@ -16,8 +16,8 @@ const connection = mysql.createConnection({
 	user: "root",
 	password: "root"
 });
-
-//testneme pripojenie
+//test vscode in GIT
+//testneme pripojenie 
 connection.connect(function(err){
 	if(err) console.error(err);
 	else console.log("Connected!!!");
